@@ -24,22 +24,87 @@ window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
 
 
+// Audio Engine (Synthesized Sounds) (Added for fallback)
+const AudioContext = window.AudioContext || window.webkitAudioContext;
+let audioCtx;
+
+function initAudio() {
+    if (!audioCtx) audioCtx = new AudioContext();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+
+const SoundFX = {
+    playTone: (freq, type, duration) => {
+        if (!audioCtx) initAudio();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+    },
+
+    thud: () => SoundFX.playTone(100, 'triangle', 0.1),
+    crack: () => SoundFX.playTone(800, 'sawtooth', 0.05),
+    boom: () => {
+        if (!audioCtx) initAudio();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(50, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(10, audioCtx.currentTime + 1);
+
+        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 1);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc.start();
+        osc.stop(audioCtx.currentTime + 1);
+    }
+};
+
 // Haptic Engine
 const Haptics = {
-    light: () => { if (navigator.vibrate) navigator.vibrate(20); }, // Increased
-    medium: () => { if (navigator.vibrate) navigator.vibrate(60); }, // Increased
-    heavy: () => { if (navigator.vibrate) navigator.vibrate([80, 20, 80]); }, // Thump-Thump
-    // Hand-Shaker: Rapid, long pulses to saturate motor
+    light: () => {
+        if (navigator.vibrate) navigator.vibrate(20);
+        SoundFX.thud();
+    },
+    medium: () => {
+        if (navigator.vibrate) navigator.vibrate(60);
+        SoundFX.thud();
+    },
+    heavy: () => {
+        if (navigator.vibrate) navigator.vibrate([80, 20, 80]);
+        SoundFX.crack();
+    },
     explosion: () => {
         if (navigator.vibrate) navigator.vibrate([200, 30, 200, 30, 200, 30, 500]);
+        SoundFX.boom();
     },
-    // Heartbeat Rhythm (Stronger)
     heartbeat: () => {
         if (navigator.vibrate) navigator.vibrate([150, 50, 150, 400, 150, 50, 150, 400]);
+        SoundFX.thud(); setTimeout(SoundFX.thud, 200);
     },
-    // Victory Rhythm (MAX POWER)
     victory: () => {
         if (navigator.vibrate) navigator.vibrate([150, 50, 150, 50, 150, 50, 150, 50, 800]);
+        // Rhythmic sounds
+        let timing = 0;
+        for (let i = 0; i < 4; i++) {
+            setTimeout(SoundFX.thud, timing);
+            timing += 200;
+        }
+        setTimeout(SoundFX.boom, 800);
     }
 };
 
@@ -47,6 +112,7 @@ const Haptics = {
 // Input Handler
 function handleInteraction(e) {
     if (currentHealth <= 0) return;
+    initAudio(); // Initialize on first interact
 
     // Prevent default touch behavior (zooming etc)
     // e.preventDefault(); 
