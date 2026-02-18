@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Vibe Smash!</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;900&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div id="game-container">
+
+        <!-- Screen Shake Wrapper -->
+        <div id="shaker">
+
+            <!-- Intro / HUD -->
+            <div id="hud">
+                <div class="hud-text">ENERGY CORE DETECTED</div>
+                <div class="hud-sub">TAP TO BREACH</div>
+            </div>
+
+            <!-- The Core (Target) -->
+            <div id="core-container">
+                <div id="core">
+                    <div class="core-inner"></div>
+                </div>
+            </div>
+
+            <!-- Health Bar -->
+            <div id="health-container">
+                <div id="health-bar"></div>
+            </div>
+
+        </div>
+
+        <!-- Touch Feedback Layer -->
+        <canvas id="particles"></canvas>
+
+        <!-- Final Reveal Overlay -->
+        <div id="reveal-overlay">
+            <h1 class="glitch-text" data-text="THANK YOU">THANK YOU</h1>
+            <p class="message">You guys are the energy that keeps me going! ⚡️</p>
+            <button id="replay-btn">Recharge</button>
+        </div>
+
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>

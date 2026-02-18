@@ -1,0 +1,319 @@
+:root {
+    --bg-color: #050505;
+    --neon-blue: #00f3ff;
+    --neon-red: #ff003c;
+    --neon-purple: #bc13fe;
+    --core-color: var(--neon-blue);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: white;
+    font-family: 'Orbitron', sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#game-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+#shaker {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* HUD */
+#hud {
+    position: absolute;
+    top: 10%;
+    text-align: center;
+    opacity: 0.8;
+}
+
+.hud-text {
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+    color: var(--neon-blue);
+    text-shadow: 0 0 10px var(--neon-blue);
+}
+
+.hud-sub {
+    font-size: 0.8rem;
+    margin-top: 5px;
+    color: #666;
+}
+
+/* The Core */
+#core-container {
+    perspective: 1000px;
+    cursor: pointer;
+}
+
+#core {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    /* Start as sphere-ish */
+    background: radial-gradient(circle, #fff, var(--core-color));
+    box-shadow: 0 0 50px var(--core-color), inset 0 0 20px #fff;
+    position: relative;
+    transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Inner pulsing visual */
+.core-inner {
+    width: 80%;
+    height: 80%;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    opacity: 0.5;
+    animation: pulse 1s infinite alternate;
+}
+
+@keyframes pulse {
+    from {
+        transform: scale(0.9);
+        opacity: 0.3;
+    }
+
+    to {
+        transform: scale(1.1);
+        opacity: 0.8;
+    }
+}
+
+/* Damage States */
+#core.damaged-1 {
+    --core-color: var(--neon-purple);
+    clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%);
+    /* Slight distortion */
+}
+
+#core.damaged-2 {
+    --core-color: var(--neon-red);
+    clip-path: polygon(20% 0%, 80% 0%, 100% 20%, 100% 80%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
+    animation: glitch-anim 0.2s infinite;
+}
+
+@keyframes glitch-anim {
+    0% {
+        transform: translate(0)
+    }
+
+    20% {
+        transform: translate(-2px, 2px)
+    }
+
+    40% {
+        transform: translate(-2px, -2px)
+    }
+
+    60% {
+        transform: translate(2px, 2px)
+    }
+
+    80% {
+        transform: translate(2px, -2px)
+    }
+
+    100% {
+        transform: translate(0)
+    }
+}
+
+
+/* Health Bar */
+#health-container {
+    position: absolute;
+    bottom: 10%;
+    width: 80%;
+    height: 10px;
+    background: #333;
+    border-radius: 5px;
+    overflow: hidden;
+    border: 1px solid #555;
+}
+
+#health-bar {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, var(--neon-blue), var(--neon-red));
+    transition: width 0.1s linear;
+}
+
+/* Screen Shake Class (Applied via JS) */
+.shake-screen {
+    animation: screen-shake 0.3s cubic-bezier(.36, .07, .19, .97) both;
+}
+
+@keyframes screen-shake {
+
+    10%,
+    90% {
+        transform: translate3d(-4px, 0, 0) rotate(-1deg);
+    }
+
+    20%,
+    80% {
+        transform: translate3d(6px, 0, 0) rotate(2deg);
+    }
+
+    30%,
+    50%,
+    70% {
+        transform: translate3d(-8px, 0, 0) rotate(-2deg);
+    }
+
+    40%,
+    60% {
+        transform: translate3d(8px, 0, 0) rotate(1deg);
+    }
+}
+
+/* Particles Canvas */
+#particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 10;
+}
+
+/* Reveal Overlay */
+#reveal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 20;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 1s ease;
+}
+
+#reveal-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+    background: radial-gradient(circle, #2a0000 0%, #000 100%);
+}
+
+.glitch-text {
+    font-size: 3rem;
+    font-weight: 900;
+    position: relative;
+    color: #fff;
+}
+
+/* Simple glitch effect for text */
+.glitch-text::before,
+.glitch-text::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+}
+
+.glitch-text::before {
+    left: 2px;
+    text-shadow: -1px 0 #ff003c;
+    animation: glitch-anim-2 2s infinite linear alternate-reverse;
+}
+
+.glitch-text::after {
+    left: -2px;
+    text-shadow: 2px 0 #00f3ff;
+    animation: glitch-anim-2 3s infinite linear alternate-reverse;
+}
+
+@keyframes glitch-anim-2 {
+    0% {
+        clip-path: inset(10% 0 80% 0);
+    }
+
+    20% {
+        clip-path: inset(80% 0 10% 0);
+    }
+
+    40% {
+        clip-path: inset(40% 0 30% 0);
+    }
+
+    60% {
+        clip-path: inset(20% 0 70% 0);
+    }
+
+    80% {
+        clip-path: inset(60% 0 10% 0);
+    }
+
+    100% {
+        clip-path: inset(0% 0 90% 0);
+    }
+}
+
+.message {
+    margin-top: 2rem;
+    font-size: 1.2rem;
+    max-width: 80%;
+    text-align: center;
+    line-height: 1.5;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.5s 1s ease-out;
+}
+
+#reveal-overlay.active .message {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+#replay-btn {
+    margin-top: 3rem;
+    padding: 1rem 2rem;
+    background: transparent;
+    border: 1px solid var(--neon-blue);
+    color: var(--neon-blue);
+    font-family: inherit;
+    text-transform: uppercase;
+    cursor: pointer;
+    opacity: 0;
+    transition: all 0.5s 2s ease;
+}
+
+#reveal-overlay.active #replay-btn {
+    opacity: 1;
+}
