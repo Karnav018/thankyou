@@ -29,7 +29,14 @@ const Haptics = {
     light: () => { if (navigator.vibrate) navigator.vibrate(10); },
     medium: () => { if (navigator.vibrate) navigator.vibrate(40); },
     heavy: () => { if (navigator.vibrate) navigator.vibrate([50, 20, 50]); },
-    explosion: () => { if (navigator.vibrate) navigator.vibrate([100, 30, 100, 30, 300]); }
+    // Heartbeat Rhythm: Thump-Thump... Thump-Thump...
+    heartbeat: () => {
+        if (navigator.vibrate) navigator.vibrate([100, 100, 100, 400, 100, 100, 100, 400, 100, 100, 100]);
+    },
+    // Victory Rhythm: Bom-Bom-Bom-Bom... BAAAAAM!
+    victory: () => {
+        if (navigator.vibrate) navigator.vibrate([100, 50, 100, 50, 100, 50, 100, 50, 500]);
+    }
 };
 
 
@@ -84,7 +91,9 @@ function damageCore(x, y) {
         core.classList.add('damaged-2');
         hudText.innerText = "BREACH IMMINENT";
         hudText.style.color = "var(--neon-red)";
-        Haptics.heavy();
+
+        // Intensity rampling up
+        if (Math.random() > 0.5) Haptics.heavy();
     }
 
     // Win Condition
@@ -107,19 +116,36 @@ function shakeScreen() {
 function triggerExplosion() {
     currentHealth = 0;
     updateHealthUI();
-    Haptics.explosion();
 
-    // Massive particle explosion from center
-    createParticles(window.innerWidth / 2, window.innerHeight / 2, 100, true);
+    // RHYTHMIC FINALE
+    // Play the victory pattern
+    Haptics.victory();
 
-    // Hide core
-    core.style.opacity = '0';
-    core.style.pointerEvents = 'none';
+    // Sync Visuals to the specific rhythm [100, 50, 100, 50, 100, 50, 100, 50, 500]
+    // We can manually trigger pulses to match the 'ON' times of the vibration
 
-    // Show Overlay
+    const rhythmDelays = [0, 150, 300, 450, 600]; // Approximate start times of the pulses
+
+    rhythmDelays.forEach((delay, index) => {
+        setTimeout(() => {
+            createParticles(window.innerWidth / 2, window.innerHeight / 2, 20, true);
+            shakeScreen();
+        }, delay);
+    });
+
+    // The final big bang at the end of the rhythm
     setTimeout(() => {
+        // Massive particle explosion from center
+        createParticles(window.innerWidth / 2, window.innerHeight / 2, 100, true);
+
+        // Hide core
+        core.style.opacity = '0';
+        core.style.pointerEvents = 'none';
+
+        // Show Overlay
         revealOverlay.classList.add('active');
-    }, 500);
+
+    }, 800); // Matches end of rhythm
 }
 
 
