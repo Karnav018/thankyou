@@ -26,16 +26,20 @@ resizeCanvas();
 
 // Haptic Engine
 const Haptics = {
-    light: () => { if (navigator.vibrate) navigator.vibrate(10); },
-    medium: () => { if (navigator.vibrate) navigator.vibrate(40); },
-    heavy: () => { if (navigator.vibrate) navigator.vibrate([50, 20, 50]); },
-    // Heartbeat Rhythm: Thump-Thump... Thump-Thump...
-    heartbeat: () => {
-        if (navigator.vibrate) navigator.vibrate([100, 100, 100, 400, 100, 100, 100, 400, 100, 100, 100]);
+    light: () => { if (navigator.vibrate) navigator.vibrate(20); }, // Increased
+    medium: () => { if (navigator.vibrate) navigator.vibrate(60); }, // Increased
+    heavy: () => { if (navigator.vibrate) navigator.vibrate([80, 20, 80]); }, // Thump-Thump
+    // Hand-Shaker: Rapid, long pulses to saturate motor
+    explosion: () => {
+        if (navigator.vibrate) navigator.vibrate([200, 30, 200, 30, 200, 30, 500]);
     },
-    // Victory Rhythm: Bom-Bom-Bom-Bom... BAAAAAM!
+    // Heartbeat Rhythm (Stronger)
+    heartbeat: () => {
+        if (navigator.vibrate) navigator.vibrate([150, 50, 150, 400, 150, 50, 150, 400]);
+    },
+    // Victory Rhythm (MAX POWER)
     victory: () => {
-        if (navigator.vibrate) navigator.vibrate([100, 50, 100, 50, 100, 50, 100, 50, 500]);
+        if (navigator.vibrate) navigator.vibrate([150, 50, 150, 50, 150, 50, 150, 50, 800]);
     }
 };
 

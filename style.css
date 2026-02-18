@@ -303,17 +303,38 @@ body {
 
 #replay-btn {
     margin-top: 3rem;
-    padding: 1rem 2rem;
-    background: transparent;
-    border: 1px solid var(--neon-blue);
+    padding: 1.5rem 3rem;
+    /* Larger touch target */
+    background: rgba(0, 243, 255, 0.1);
+    border: 2px solid var(--neon-blue);
     color: var(--neon-blue);
     font-family: inherit;
+    font-size: 1.2rem;
+    font-weight: bold;
     text-transform: uppercase;
     cursor: pointer;
+    box-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
     opacity: 0;
     transition: all 0.5s 2s ease;
+    animation: btn-pulse 2s infinite;
 }
 
-#reveal-overlay.active #replay-btn {
-    opacity: 1;
+#replay-btn:active {
+    background: var(--neon-blue);
+    color: #000;
+    transform: scale(0.95);
+}
+
+@keyframes btn-pulse {
+    0% {
+        box-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
+    }
+
+    50% {
+        box-shadow: 0 0 40px rgba(0, 243, 255, 0.6);
+    }
+
+    100% {
+        box-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
+    }
 }
