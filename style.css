@@ -317,6 +317,18 @@ body {
     opacity: 0;
     transition: all 0.5s 2s ease;
     animation: btn-pulse 2s infinite;
+
+    /* Fix for square highlight on mobile */
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    touch-action: manipulation;
+    border-radius: 4px;
+    /* Explicit radius */
+}
+
+#replay-btn:focus {
+    outline: none;
 }
 
 #replay-btn:active {
